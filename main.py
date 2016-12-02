@@ -4,6 +4,7 @@ import datetime
 import imutils
 import time
 import cv2
+import time
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -23,6 +24,18 @@ else:
 # initialize the first frame 
 firstFrame = None
 
+# Find OpenCV version
+(major_ver, minor_ver, subminor_ver) = (cv2.__version__).split('.')
+     
+if int(major_ver)  < 3 :
+	fps = camera.get(cv2.cv.CV_CAP_PROP_FPS)
+        print "Frames per second using video.get(cv2.cv.CV_CAP_PROP_FPS):{0}".format(fps)
+else :
+	fps = camera.get(cv2.CAP_PROP_FPS)
+        print "Frames per second using video.get(cv2.CAP_PROP_FPS) : {0}".format(fps)
+
+frames_counter = 0
+start = time.time()
 # loop over the frames of the video
 while True:
 	# grab the current frame and initialize the occupied/unoccupied
@@ -33,6 +46,19 @@ while True:
 	# end of the video
 	if not grabbed:
 		break
+	
+	
+
+	if frames_counter == 60:
+		end = time.time()
+		seconds = end - start
+    		print "Time taken : {0} seconds".format(seconds)
+ 
+    		# Calculate frames per second
+    		fps  = frames_counter / seconds;
+    		print "Estimated frames per second : {0}".format(fps);
+ 
+		
 
 	# resize the frame, convert it to grayscale, and blur it
 	frame = imutils.resize(frame, width=900)
@@ -65,7 +91,7 @@ while True:
 		cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
 		#text = "Occupied"
 
-
+	frames_counter = frames_counter + 1
 	# show the frame and record if the user presses a key
 	cv2.imshow("Security Feed", frame)
 	#cv2.imshow("Thresh", thresh)
