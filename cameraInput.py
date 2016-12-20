@@ -13,34 +13,6 @@ from PyQt5.QtMultimediaWidgets import *
 #OpenCV Libraries
 import cv2
 
-class SortedDict(dict):
-    class Iterator(object):
-        def __init__(self, sorted_dict):
-            self._dict = sorted_dict
-            self._keys = sorted(self._dict.keys())
-            self._nr_items = len(self._keys)
-            self._idx = 0
-
-        def __iter__(self):
-            return self
-
-        def next(self):
-            if self._idx >= self._nr_items:
-                raise StopIteration
-
-            key = self._keys[self._idx]
-            value = self._dict[key]
-            self._idx += 1
-
-            return key, value
-
-        __next__ = next
-
-    def __iter__(self):
-        return SortedDict.Iterator(self)
-
-    iterkeys = __iter__
-
 class cameraInput(QWidget):
     def __init__(self, parent=None):
         super(cameraInput, self).__init__(parent)
@@ -72,8 +44,9 @@ class cameraInput(QWidget):
         self.checkBox3.setChecked(False)
         self.checkBox3.toggled.connect(lambda:self.btnstate(self.checkBox3))
         self.cameraChoice = QComboBox()
-        self.cameraChoice.addItem("PC Camera")
-        self.cameraChoice.addItem("2nd PC Camera")
+        self.cameraChoice.addItem("PC WebCam (0)")
+        self.cameraChoice.addItem("External WebCam(1)")
+        #add connections to items
         self.cameraChoice.setEnabled(False)
 
         buttonLayout1 = QHBoxLayout()
@@ -122,6 +95,7 @@ class cameraInput(QWidget):
             self.textbox.setEnabled(False)
             self.ipButton.setEnabled(False)
 
+            '''
             cap = cv2.VideoCapture(0)
 
             while(True):
@@ -139,6 +113,7 @@ class cameraInput(QWidget):
             # When everything done, release the capture
             cap.release()
             cv2.destroyAllWindows()
+            '''
 
         if b.text() == "IP Camera":
 
