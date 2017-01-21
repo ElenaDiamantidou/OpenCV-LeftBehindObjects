@@ -120,45 +120,44 @@ while True:
 		if cv2.contourArea(c) < args["min_area"]:
 			continue
 		elif cv2.contourArea(c) > args["min_area"] and cv2.contourArea(c) < args["max_area"]:
+
+			(x, y, w, h) = cv2.boundingRect(c)
 			#print len(cnts)
 			if len(cnts_list) < 10:
 				cnts_list.append(len(cnts))
-				print cnts_list
+				#print cnts_list
 			else:
-				print "In else"
+				#print "In else"
 				cnts_list.pop(0)
 				cnts_list.append(len(cnts))
-				print cnts_list
+				#print cnts_list
 
 				if (max(cnts_list) - min(cnts_list) == 0 ):
 							cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2) #GREEN
 							#break
 
-
-			(x, y, w, h) = cv2.boundingRect(c)
-
-			if len(x_list) < args["small_buffer"] and len(y_list)<args["small_buffer"]:
-				x_list.append(x)
-				y_list.append(y)
-				cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
-				adaptive_flag = False
-			else:
-				x_list.pop(0)
-				y_list.pop(0)
-				x_list.append(x)
-				y_list.append(y)
-				#print "X: "+str(x)+" Y: "+str(y)
-
-				if (max(x_list) - min(x_list) > 3) and (max(y_list) - min(y_list) >3):
-					cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2) #BLUE
-					adaptive_flag = False
-				else:
-					cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2) #GREEN
-					adaptive_flag = True
-					adaptive_frames_counter += 1
-					#print adaptive_frames_counter
-					#logging.basicConfig(filename='example.log',level=logging.INFO,format='%(asctime)s %(message)s', datefmt='%d/%m/%Y %I:%M:%S %p')
-					#logging.warning(' -> '+str(len(cnts))+' Object(s) left behind.')
+			# if len(x_list) < args["small_buffer"] and len(y_list)<args["small_buffer"]:
+			# 	x_list.append(x)
+			# 	y_list.append(y)
+			# 	cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+			# 	adaptive_flag = False
+			# else:
+			# 	x_list.pop(0)
+			# 	y_list.pop(0)
+			# 	x_list.append(x)
+			# 	y_list.append(y)
+			# 	#print "X: "+str(x)+" Y: "+str(y)
+			#
+			# 	if (max(x_list) - min(x_list) > 3) and (max(y_list) - min(y_list) >3):
+			# 		cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2) #BLUE
+			# 		adaptive_flag = False
+			# 	else:
+			# 		cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2) #GREEN
+			# 		adaptive_flag = True
+			# 		adaptive_frames_counter += 1
+			# 		#print adaptive_frames_counter
+			# 		#logging.basicConfig(filename='example.log',level=logging.INFO,format='%(asctime)s %(message)s', datefmt='%d/%m/%Y %I:%M:%S %p')
+			# 		#logging.warning(' -> '+str(len(cnts))+' Object(s) left behind.')
 		else:
 			(x, y, w, h) = cv2.boundingRect(c)
 
