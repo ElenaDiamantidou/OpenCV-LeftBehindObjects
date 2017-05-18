@@ -231,6 +231,8 @@ while True:
 	if key == ord("q"):
 		break
 
+	time.sleep(0.009)
+
 # cleanup the camera and close any open windows
 camera.release()
 cv2.destroyAllWindows()
