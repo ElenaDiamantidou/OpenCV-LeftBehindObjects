@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 
 #define url camera
-url = 'http://192.168.1.17:8080/shot.jpg'
+url = 'http://192.168.1.13:8080/shot.jpg'
 
 #refresh image using while loop
 while True:
@@ -15,3 +15,5 @@ while True:
     print img
     cv2.imshow('testIPCamera', img)
     cv2.waitKey(10)
+    if ord('q') == cv2.waitKey(10):
+        exit(0)
