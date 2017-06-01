@@ -13,6 +13,9 @@ from PyQt5.QtMultimediaWidgets import *
 #OpenCV Libraries
 import cv2
 
+#python files
+import ipCamera
+
 class cameraInput(QWidget):
     def __init__(self, parent=None):
         super(cameraInput, self).__init__(parent)
@@ -131,10 +134,12 @@ class cameraInput(QWidget):
         print fileName
 
     def ipConnect(self):
-        pass
+        ipCamera.ip(self.ipWebcam)
 
     def link(self, text):
-        print text
+        #enable ipButton for connection with ip webacam
+        self.ipButton.setEnabled(True)
+        self.ipWebcam = text
 
 
 
