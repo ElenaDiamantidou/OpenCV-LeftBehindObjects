@@ -17,8 +17,7 @@ def cpu_percent():
 	cpu_percentage = psutil.cpu_percent(interval=1)
 	print "CPU : {0}".format(cpu_percentage)
 
-def main(video):
-	print video
+def main():
 	# construct the argument parser and parse the arguments
 	#ap = argparse.ArgumentParser()
 	#ap.add_argument("-v", "--video", help="path to the video file")
@@ -33,19 +32,13 @@ def main(video):
 	#ap.add_argument("-disp", "--display", default="y", help="Display window")
 	#args = vars(ap.parse_args())
 
-	# if the video argument is None, then we are reading from webcam
-	'''
-	if args.get("video", None) is None:
-		camera = cv2.VideoCapture(0)
-		# camera = cv2.VideoCapture("http://axilleas:79c87afa55@83.212.104.135:8080/4.MOV")
-		#camera = cv2.VideoCapture("http://::192.168.2.2:8080/")
-		time.sleep(0.25)
 
-	# we are reading from a video file
-	else:
-		pass
-	'''
-	camera = cv2.VideoCapture(video)
+	# if the video argument is None, then we are reading from webcam
+	camera = cv2.VideoCapture(0)
+	#camera = cv2.VideoCapture("http://axilleas:79c87afa55@83.212.104.135:8080/4.MOV")
+	#camera = cv2.VideoCapture("http://::192.168.2.2:8080/")
+	time.sleep(0.25)
+
 
 	# initialize the first frame
 	firstFrame = None

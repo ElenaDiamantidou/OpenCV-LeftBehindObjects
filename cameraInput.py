@@ -15,6 +15,8 @@ import cv2
 
 #python files
 import ipCamera
+import streamDisp
+import main
 
 class cameraInput(QWidget):
     def __init__(self, parent=None):
@@ -30,7 +32,7 @@ class cameraInput(QWidget):
         self.textbox.move(20, 20)
         self.textbox.resize(280,40)
         self.textbox.setEnabled(False)
-        self.textbox.setPlaceholderText('Enter Link...')
+        self.textbox.setPlaceholderText('Enter IP...')
         self.textbox.textChanged.connect(self.link)
         self.ipButton = QPushButton("Connect IP")
         self.ipButton.clicked.connect(self.ipConnect)
@@ -46,11 +48,24 @@ class cameraInput(QWidget):
         self.checkBox3 = QRadioButton("Camera")
         self.checkBox3.setChecked(False)
         self.checkBox3.toggled.connect(lambda:self.btnstate(self.checkBox3))
-        self.cameraChoice = QComboBox()
-        self.cameraChoice.addItem("PC WebCam (0)")
-        self.cameraChoice.addItem("External WebCam(1)")
-        #add connections to items
+        self.cameraChoice = QPushButton("Open PC Camera")
+        self.cameraChoice.clicked.connect(self.cameraStream)
         self.cameraChoice.setEnabled(False)
+        #add arguments for streaming
+        self.minArea = QLabel("min-area", self)
+        self.minAreaInput = QLineEdit(self)
+        #self.minAreaInput.resize(280,40)
+        self.minAreaInput.setEnabled(False)
+        self.minAreaInput.setPlaceholderText('2000')
+        #ap.add_argument("-min", "--min-area", type=int, default=2000, help="minimum area size")
+    	#ap.add_argument("-max", "--max-area", type=int, default=4800, help="maximum area size")
+    	#ap.add_argument("-small", "--small-buffer", type=int, default=20, help="buffer for small objects")
+    	#ap.add_argument("-big", "--big-buffer", type=int, default=100, help="buffer for big objects")
+    	#ap.add_argument("-ad", "--adaptive", type=int, default=0, help="minutes after adaptive")
+    	#ap.add_argument("-am", "--adaptive-mode", type=bool, default=0, help="adaptive mod ON/OFF")
+    	#ap.add_argument("-max-obj", "--max-objects", type=int, default=2, help="maximum number of objects in frame to be adapted")
+    	#ap.add_argument("-w", "--win-width", type=int, default=500, help="maximum window width")
+    	#ap.add_argument("-disp", "--display", default="y", help="Display window"
 
         buttonLayout1 = QHBoxLayout()
         buttonLayout1.addWidget(self.checkBox2)
@@ -62,10 +77,22 @@ class cameraInput(QWidget):
         buttonLayout2.addWidget(self.textbox)
         buttonLayout2.addWidget(self.ipButton)
 
-        buttonLayout3 = QHBoxLayout()
-        #buttonLayout3.addStretch(1)
-        buttonLayout3.addWidget(self.checkBox3)
-        buttonLayout3.addWidget(self.cameraChoice)
+
+        buttonLayout3MinArea = QHBoxLayout()
+        buttonLayout3MinArea.addWidget(self.minArea)
+        buttonLayout3MinArea.addWidget(self.minAreaInput)
+
+        buttonLayout3OpenCam = QHBoxLayout()
+        buttonLayout3OpenCam.addWidget(self.checkBox3)
+        buttonLayout3OpenCam.addWidget(self.cameraChoice)
+
+
+        buttonLayout3 = QVBoxLayout()
+        buttonLayout3.addLayout(buttonLayout3OpenCam)
+        buttonLayout3.addLayout(buttonLayout3MinArea)
+        #buttonLayout3.addLayout(buttonLayout3Main)
+        #buttonLayout3.addLayout(buttonLayout3Modify)
+
         '''
         self.choice = QButtonGroup()
         self.choice.setExclusive(True)
@@ -132,6 +159,10 @@ class cameraInput(QWidget):
         #"(*.avi) for browse filter"
         fileName,_ =  QFileDialog.getOpenFileName(self, "Open Video File ", QDir.currentPath())
         print fileName
+        self.fileName = fileName
+        #open main with vieo input
+        main.main(self.fileName)
+
 
     def ipConnect(self):
         ipCamera.ip(self.ipWebcam)
@@ -140,6 +171,10 @@ class cameraInput(QWidget):
         #enable ipButton for connection with ip webacam
         self.ipButton.setEnabled(True)
         self.ipWebcam = text
+
+    def cameraStream(self):
+        #open pc webcam for streaming
+        streamDisp.main()
 
 
 
