@@ -21,7 +21,8 @@ import main
 class cameraInput(QWidget):
     def __init__(self, parent=None):
         super(cameraInput, self).__init__(parent)
-
+        self.setSizePolicy ( QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.clicked.connect(TextObject.SLOT_TextInsert('%s' %(text)))
 
         #first UI
         #initialize video choices
@@ -52,18 +53,63 @@ class cameraInput(QWidget):
         self.cameraChoice.clicked.connect(self.cameraStream)
         self.cameraChoice.setEnabled(False)
         #add arguments for streaming
+        #minimum area size
         self.minArea = QLabel("min-area", self)
+        self.minArea.setEnabled(False)
         self.minAreaInput = QLineEdit(self)
-        #self.minAreaInput.resize(280,40)
+        self.minAreaInput.resize(20,20)
         self.minAreaInput.setEnabled(False)
-        self.minAreaInput.setPlaceholderText('2000')
-        #ap.add_argument("-min", "--min-area", type=int, default=2000, help="minimum area size")
-    	#ap.add_argument("-max", "--max-area", type=int, default=4800, help="maximum area size")
-    	#ap.add_argument("-small", "--small-buffer", type=int, default=20, help="buffer for small objects")
-    	#ap.add_argument("-big", "--big-buffer", type=int, default=100, help="buffer for big objects")
-    	#ap.add_argument("-ad", "--adaptive", type=int, default=0, help="minutes after adaptive")
-    	#ap.add_argument("-am", "--adaptive-mode", type=bool, default=0, help="adaptive mod ON/OFF")
-    	#ap.add_argument("-max-obj", "--max-objects", type=int, default=2, help="maximum number of objects in frame to be adapted")
+        self.minAreaInput.setText('2000')
+        #maximum area size
+        self.maxArea = QLabel("max-area", self)
+        self.maxArea.setEnabled(False)
+        self.maxAreaInput = QLineEdit(self)
+        self.maxAreaInput.setEnabled(False)
+        self.maxAreaInput.setText('4800')
+        #buffer for small objects
+        self.smalBuffer = QLabel("small-buffer", self)
+        self.smalBuffer.setEnabled(False)
+        self.smallBufferInput = QLineEdit(self)
+        self.smallBufferInput.setEnabled(False)
+        self.smallBufferInput.setText('20')
+        #buffer for big objects
+        self.bigBuffer = QLabel("big-buffer", self)
+        self.bigBuffer.setEnabled(False)
+        self.bigBufferInput = QLineEdit(self)
+        self.bigBufferInput.setEnabled(False)
+        self.bigBufferInput.setText('100')
+        #minutes after adaptive
+        self.adaptive = QLabel("adaptive", self)
+        self.adaptive.setEnabled(False)
+        self.adaptiveInput = QLineEdit(self)
+        self.adaptive.resize(20,20)
+        self.adaptiveInput.setEnabled(False)
+        self.adaptiveInput.setText('0')
+        #adaptive mod ON/OFF
+        self.adaptiveMode = QLabel("adaptive-mode", self)
+        self.adaptiveMode.setEnabled(False)
+        self.adaptiveModeInput = QCheckBox(self)
+        self.adaptiveModeInput.setEnabled(False)
+        self.adaptiveModeInput.setChecked(True)
+        #maximum number of objects in frame to be adapted
+        self.maxObj = QLabel("max-obj", self)
+        self.maxObj.setEnabled(False)
+        self.maxObjInput = QLineEdit(self)
+        self.maxObjInput.setEnabled(False)
+        self.maxObjInput.setText('2')
+        #maximum window width
+        self.winWidth = QLabel("window-width", self)
+        self.winWidth.setEnabled(False)
+        self.winWidthInput = QLineEdit(self)
+        self.winWidthInput.setEnabled(False)
+        self.winWidthInput.setText('500')
+        #Display window
+        self.disp = QLabel("display-window", self)
+        self.disp.setEnabled(False)
+        self.dispInput = QCheckBox(self)
+        self.dispInput.setEnabled(False)
+        self.dispInput.setChecked(True)
+
     	#ap.add_argument("-w", "--win-width", type=int, default=500, help="maximum window width")
     	#ap.add_argument("-disp", "--display", default="y", help="Display window"
 
@@ -72,15 +118,37 @@ class cameraInput(QWidget):
         buttonLayout1.addWidget(self.videoButton)
 
         buttonLayout2 = QHBoxLayout()
-        #buttonLayout2.addStretch(1)
         buttonLayout2.addWidget(self.checkBox1)
         buttonLayout2.addWidget(self.textbox)
         buttonLayout2.addWidget(self.ipButton)
 
 
-        buttonLayout3MinArea = QHBoxLayout()
-        buttonLayout3MinArea.addWidget(self.minArea)
-        buttonLayout3MinArea.addWidget(self.minAreaInput)
+        buttonLayout3Area = QHBoxLayout()
+        buttonLayout3Area.addStretch(1)
+        buttonLayout3Area.addWidget(self.minArea)
+        buttonLayout3Area.addWidget(self.minAreaInput)
+        buttonLayout3Area.addWidget(self.maxArea)
+        buttonLayout3Area.addWidget(self.maxAreaInput)
+
+        buttonLayout3Buffer = QHBoxLayout()
+        buttonLayout3Buffer.addWidget(self.smalBuffer)
+        buttonLayout3Buffer.addWidget(self.smallBufferInput)
+        buttonLayout3Buffer.addWidget(self.bigBuffer)
+        buttonLayout3Buffer.addWidget(self.bigBufferInput)
+
+        buttonLayout3Adaptive = QHBoxLayout()
+        buttonLayout3Adaptive.addWidget(self.adaptive)
+        buttonLayout3Adaptive.addWidget(self.adaptiveInput)
+        buttonLayout3Adaptive.addWidget(self.adaptiveMode)
+        buttonLayout3Adaptive.addWidget(self.adaptiveModeInput)
+
+        buttonLayout3Objects = QHBoxLayout()
+        buttonLayout3Objects.addWidget(self.maxObj)
+        buttonLayout3Objects.addWidget(self.maxObjInput)
+        buttonLayout3Objects.addWidget(self.winWidth)
+        buttonLayout3Objects.addWidget(self.winWidthInput)
+        buttonLayout3Objects.addWidget(self.disp)
+        buttonLayout3Objects.addWidget(self.dispInput)
 
         buttonLayout3OpenCam = QHBoxLayout()
         buttonLayout3OpenCam.addWidget(self.checkBox3)
@@ -89,7 +157,10 @@ class cameraInput(QWidget):
 
         buttonLayout3 = QVBoxLayout()
         buttonLayout3.addLayout(buttonLayout3OpenCam)
-        buttonLayout3.addLayout(buttonLayout3MinArea)
+        buttonLayout3.addLayout(buttonLayout3Area)
+        buttonLayout3.addLayout(buttonLayout3Buffer)
+        buttonLayout3.addLayout(buttonLayout3Adaptive)
+        buttonLayout3.addLayout(buttonLayout3Objects)
         #buttonLayout3.addLayout(buttonLayout3Main)
         #buttonLayout3.addLayout(buttonLayout3Modify)
 
