@@ -1,6 +1,8 @@
 # OpenCV-LeftBehindObjects
 
 Track left objects - Background Subtraction
+OpenCV Tools
+Graphical Interface with PyQt5
 
 **Dependencies**
 imutils,
