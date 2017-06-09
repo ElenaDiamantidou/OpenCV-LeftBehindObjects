@@ -17,26 +17,13 @@ def cpu_percent():
 	cpu_percentage = psutil.cpu_percent(interval=1)
 	print "CPU : {0}".format(cpu_percentage)
 
-def main():
-	# construct the argument parser and parse the arguments
-	#ap = argparse.ArgumentParser()
-	#ap.add_argument("-v", "--video", help="path to the video file")
-	#ap.add_argument("-min", "--min-area", type=int, default=2000, help="minimum area size")
-	#ap.add_argument("-max", "--max-area", type=int, default=4800, help="maximum area size")
-	#ap.add_argument("-small", "--small-buffer", type=int, default=20, help="buffer for small objects")
-	#ap.add_argument("-big", "--big-buffer", type=int, default=100, help="buffer for big objects")
-	#ap.add_argument("-ad", "--adaptive", type=int, default=0, help="minutes after adaptive")
-	#ap.add_argument("-am", "--adaptive-mode", type=bool, default=0, help="adaptive mod ON/OFF")
-	#ap.add_argument("-max-obj", "--max-objects", type=int, default=2, help="maximum number of objects in frame to be adapted")
-	#ap.add_argument("-w", "--win-width", type=int, default=500, help="maximum window width")
-	#ap.add_argument("-disp", "--display", default="y", help="Display window")
-	#args = vars(ap.parse_args())
-
+def main(minAreaValue,maxAreaValue,
+		 smallBufferValue, bigBufferValue,
+		 adaptiveValue, adaptiveModeValue,
+		 maxObjValue, winWidthValue, dispInputValue):
 
 	# if the video argument is None, then we are reading from webcam
 	camera = cv2.VideoCapture(0)
-	#camera = cv2.VideoCapture("http://axilleas:79c87afa55@83.212.104.135:8080/4.MOV")
-	#camera = cv2.VideoCapture("http://::192.168.2.2:8080/")
 	time.sleep(0.25)
 
 
@@ -58,11 +45,10 @@ def main():
 	#Variable for the counting of the frames
 	frames_counter = 0
 	adaptive_frames_counter = 0
-	#adaptive = args["adaptive"] * 60 * fps
-	adaptive = 0
+	adaptive = int(adaptiveValue) * 60 * fps
 	adaptive_flag = False
 	(grabbed, original_frame) = camera.read()
-	original_frame = imutils.resize(original_frame, 500) #args["win_width"]
+	original_frame = imutils.resize(original_frame, int(winWidthValue))
 	original_gray = cv2.cvtColor(original_frame, cv2.COLOR_BGR2GRAY)
 	original_gray = cv2.GaussianBlur(original_gray, (21, 21), 0)
 	#print original_gray[183:235,369:421]
@@ -101,7 +87,7 @@ def main():
 			start = time.time()
 
 		# resize the frame, convert it to grayscale, and blur it
-		frame = imutils.resize(frame, 500) #args["win_width"])
+		frame = imutils.resize(frame, int(winWidthValue))
 		gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 		gray = cv2.GaussianBlur(gray, (21, 21), 0)
 
@@ -127,9 +113,9 @@ def main():
 		# loop over the contours
 		for c in cnts:
 			# if the contour is too small, ignore it
-			if cv2.contourArea(c) < 2000: #args["min_area"]:
+			if cv2.contourArea(c) < minAreaValue:
 				continue
-			elif cv2.contourArea(c) > 2000 and cv2.contourArea(c) < 4800:#args["min_area"] and cv2.contourArea(c) < args["max_area"]:
+			elif cv2.contourArea(c) > maxAreaValue and cv2.contourArea(c) < minAreaValue:
 
 				(x, y, w, h) = cv2.boundingRect(c)
 				#print len(cnts)
@@ -175,7 +161,7 @@ def main():
 				(x, y, w, h) = cv2.boundingRect(c)
 
 				#if len(big_item_x_list) < args["big_buffer"] and len(big_item_y_list)<args["big_buffer"]:
-				if len(big_item_x_list) < 100 and len(big_item_y_list) < 100:
+				if len(big_item_x_list) < int(bigBufferValue) and len(big_item_y_list) < int(bigBufferValue):
 					big_item_x_list.append(x)
 					big_item_y_list.append(y)
 					cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2) #RED
@@ -197,14 +183,13 @@ def main():
 						adaptive_frames_counter += 1
 						#print adaptive_frames_counter
 
-		#args["win_width"] = 500
-		cv2.putText(frame, "FPS: {0}".format(fps), (500-130,30), font, 1, (255,0,0), 2, cv2.LINE_AA)
+		cv2.putText(frame, "FPS: {0}".format(fps), (int(winWidthValue)-130,30), font, 1, (255,0,0), 2, cv2.LINE_AA)
 		frames_counter = frames_counter + 1
 
 		# if args["adaptive"] == True:
 		# 	#adaptive_flag = False
 		# args["max_objects"] = 2
-		if adaptive_frames_counter >= 100 and len(cnts) <= 2 and adaptive_flag == True:
+		if adaptive_frames_counter >= 100 and len(cnts) <= int(maxObjValue) and adaptive_flag == True:
 			firstFrame = None
 			adaptive_frames_counter = 0
 			#print "X: "+str(x)+" Y: "+str(y)+" h: "+str(h)+" w: "+str(w)
@@ -220,65 +205,22 @@ def main():
 
 			#print "I'm in"
 		# show the frame and record if the user presses a key
-		#if args["display"] == "y":
-		cv2.imshow("Security Feed", frame)
+		if dispInputValue == True:
+			cv2.imshow("Security Feed", frame)
 
-		#cv2.imshow("Thresh", thresh)
-		#cv2.imshow("Frame Delta", frameDelta)
-		#cv2.imshow("Da OG", original_frame)
-		key = cv2.waitKey(1) & 0xFF
+		#cv2.waitKey(10)
+        #if ord('q') == cv2.waitKey(10):
+        #    exit(0)
+
+		key = cv2.waitKey(1)# & 0xFF
 
 		# if the `q` key is pressed, break from the lop
-		if key == ord("q"):
-			break
+		#if key == ord("q"):
+			#break
 
-		time.sleep(0.009)
+		#time.sleep(0.009)
 
 	# cleanup the camera and close any open windows
 	camera.release()
 	cv2.destroyAllWindows()
 	#sys.exit(qApp.exec_())
-
-	# import numpy as np
-	# import cv2
-	# import Tkinter as tk
-	# from PIL import Image, ImageTk
-	#
-	# #Set up GUI
-	# window = tk.Tk()  #Makes main window
-	# window.wm_title("Digital Microscope")
-	# window.config(background="#FFFFFF")
-	#
-	# #Graphics window
-	# imageFrame = tk.Frame(window, width=600, height=500)
-	# imageFrame.grid(row=0, column=0, padx=10, pady=2)
-	#
-	# #Capture video frames
-	#
-	# #cap = cv2.VideoCapture(0)
-	# cap = cv2.VideoCapture("~/Documents/Vm\ Shared/5.MOV")
-	#
-	# def show_frame():
-	#     _, frame = cap.read()
-	#     frame = cv2.flip(frame, 1)
-	#     #cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-	#     img = Image.fromarray(frame)
-	#     imgtk = ImageTk.PhotoImage(image=img)
-	#     display1.imgtk = imgtk #Shows frame for display 1
-	#     display1.configure(image=imgtk)
-	#     #display2.imgtk = imgtk #Shows frame for display 2
-	#     #display2.configure(image=imgtk)
-	#     window.after(10, show_frame)
-	#
-	# display1 = tk.Label(imageFrame)
-	# display1.grid(row=1, column=0, padx=10, pady=2)  #Display 1
-	# #display2 = tk.Label(imageFrame)
-	# #display2.grid(row=0, column=0) #Display 2
-	#
-	# #Slider window (slider controls stage position)
-	# sliderFrame = tk.Frame(window, width=600, height=100)
-	# sliderFrame.grid(row = 600, column=0, padx=10, pady=2)
-	#
-	#
-	# show_frame() #Display
-	# window.mainloop()  #Starts GUI

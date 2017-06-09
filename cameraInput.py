@@ -16,22 +16,19 @@ import cv2
 #python files
 import ipCamera
 import streamDisp
-import main
+import videoDisp
 
 class cameraInput(QWidget):
     def __init__(self, parent=None):
         super(cameraInput, self).__init__(parent)
         self.setSizePolicy ( QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.clicked.connect(TextObject.SLOT_TextInsert('%s' %(text)))
-
+        self.center()
         #first UI
         #initialize video choices
         self.checkBox1 = QRadioButton("IP Camera")
         self.checkBox1.setChecked(False)
         self.checkBox1.toggled.connect(lambda:self.btnstate(self.checkBox1))
         self.textbox = QLineEdit(self)
-        self.textbox.move(20, 20)
-        self.textbox.resize(280,40)
         self.textbox.setEnabled(False)
         self.textbox.setPlaceholderText('Enter IP...')
         self.textbox.textChanged.connect(self.link)
@@ -52,63 +49,69 @@ class cameraInput(QWidget):
         self.cameraChoice = QPushButton("Open PC Camera")
         self.cameraChoice.clicked.connect(self.cameraStream)
         self.cameraChoice.setEnabled(False)
+
+        #Horizontal Line for split
+        self.line = QFrame()
+        self.line.setFrameShape(QFrame.HLine)
+        self.line.setFrameShadow(QFrame.Sunken)
+        self.line.setLineWidth(3)
+
         #add arguments for streaming
         #minimum area size
         self.minArea = QLabel("min-area", self)
-        self.minArea.setEnabled(False)
         self.minAreaInput = QLineEdit(self)
         self.minAreaInput.resize(20,20)
-        self.minAreaInput.setEnabled(False)
         self.minAreaInput.setText('2000')
+        self.minAreaValue = self.minAreaInput.text()
+        self.minAreaInput.textChanged.connect(self.minAreaInputChange)
         #maximum area size
         self.maxArea = QLabel("max-area", self)
-        self.maxArea.setEnabled(False)
         self.maxAreaInput = QLineEdit(self)
-        self.maxAreaInput.setEnabled(False)
         self.maxAreaInput.setText('4800')
+        self.maxAreaValue = self.maxAreaInput.text()
+        self.maxAreaInput.textChanged.connect(self.maxAreaInputChange)
         #buffer for small objects
         self.smalBuffer = QLabel("small-buffer", self)
-        self.smalBuffer.setEnabled(False)
         self.smallBufferInput = QLineEdit(self)
-        self.smallBufferInput.setEnabled(False)
         self.smallBufferInput.setText('20')
+        self.smallBufferValue = self.smallBufferInput.text()
+        self.smallBufferInput.textChanged.connect(self.smallBufferInputChange)
         #buffer for big objects
         self.bigBuffer = QLabel("big-buffer", self)
-        self.bigBuffer.setEnabled(False)
         self.bigBufferInput = QLineEdit(self)
-        self.bigBufferInput.setEnabled(False)
         self.bigBufferInput.setText('100')
+        self.bigBufferValue = self.bigBufferInput.text()
+        self.bigBufferInput.textChanged.connect(self.bigBufferInputChange)
         #minutes after adaptive
         self.adaptive = QLabel("adaptive", self)
-        self.adaptive.setEnabled(False)
         self.adaptiveInput = QLineEdit(self)
-        self.adaptive.resize(20,20)
-        self.adaptiveInput.setEnabled(False)
         self.adaptiveInput.setText('0')
+        self.adaptiveValue = self.adaptiveInput.text()
+        self.adaptiveInput.textChanged.connect(self.adaptiveInputChange)
         #adaptive mod ON/OFF
         self.adaptiveMode = QLabel("adaptive-mode", self)
-        self.adaptiveMode.setEnabled(False)
         self.adaptiveModeInput = QCheckBox(self)
-        self.adaptiveModeInput.setEnabled(False)
         self.adaptiveModeInput.setChecked(True)
+        self.adaptiveModeValue = True
+        self.adaptiveModeInput.stateChanged.connect(self.adaptiveModeChange)
         #maximum number of objects in frame to be adapted
         self.maxObj = QLabel("max-obj", self)
-        self.maxObj.setEnabled(False)
         self.maxObjInput = QLineEdit(self)
-        self.maxObjInput.setEnabled(False)
         self.maxObjInput.setText('2')
+        self.maxObjValue = self.maxObjInput.text()
+        self.maxObjInput.textChanged.connect(self.maxObjInputChange)
         #maximum window width
         self.winWidth = QLabel("window-width", self)
-        self.winWidth.setEnabled(False)
         self.winWidthInput = QLineEdit(self)
-        self.winWidthInput.setEnabled(False)
         self.winWidthInput.setText('500')
+        self.winWidthValue = self.winWidthInput.text()
+        self.winWidthInput.textChanged.connect(self.winWidthInputChange)
         #Display window
         self.disp = QLabel("display-window", self)
-        self.disp.setEnabled(False)
         self.dispInput = QCheckBox(self)
-        self.dispInput.setEnabled(False)
         self.dispInput.setChecked(True)
+        self.dispInputValue = True
+        self.dispInput.stateChanged.connect(self.dispInputChange)
 
     	#ap.add_argument("-w", "--win-width", type=int, default=500, help="maximum window width")
     	#ap.add_argument("-disp", "--display", default="y", help="Display window"
@@ -124,7 +127,7 @@ class cameraInput(QWidget):
 
 
         buttonLayout3Area = QHBoxLayout()
-        buttonLayout3Area.addStretch(1)
+        #buttonLayout3Area..setAlignment(Qt.AlignCenter)
         buttonLayout3Area.addWidget(self.minArea)
         buttonLayout3Area.addWidget(self.minAreaInput)
         buttonLayout3Area.addWidget(self.maxArea)
@@ -139,16 +142,19 @@ class cameraInput(QWidget):
         buttonLayout3Adaptive = QHBoxLayout()
         buttonLayout3Adaptive.addWidget(self.adaptive)
         buttonLayout3Adaptive.addWidget(self.adaptiveInput)
-        buttonLayout3Adaptive.addWidget(self.adaptiveMode)
-        buttonLayout3Adaptive.addWidget(self.adaptiveModeInput)
+
+        buttonLayout3CheckBox = QHBoxLayout()
+        buttonLayout3CheckBox.addWidget(self.adaptiveMode)
+        buttonLayout3CheckBox.addWidget(self.adaptiveModeInput)
+        buttonLayout3CheckBox.addWidget(self.disp)
+        buttonLayout3CheckBox.addWidget(self.dispInput)
 
         buttonLayout3Objects = QHBoxLayout()
         buttonLayout3Objects.addWidget(self.maxObj)
         buttonLayout3Objects.addWidget(self.maxObjInput)
         buttonLayout3Objects.addWidget(self.winWidth)
         buttonLayout3Objects.addWidget(self.winWidthInput)
-        buttonLayout3Objects.addWidget(self.disp)
-        buttonLayout3Objects.addWidget(self.dispInput)
+
 
         buttonLayout3OpenCam = QHBoxLayout()
         buttonLayout3OpenCam.addWidget(self.checkBox3)
@@ -157,9 +163,11 @@ class cameraInput(QWidget):
 
         buttonLayout3 = QVBoxLayout()
         buttonLayout3.addLayout(buttonLayout3OpenCam)
+        buttonLayout3.addWidget(self.line)
         buttonLayout3.addLayout(buttonLayout3Area)
         buttonLayout3.addLayout(buttonLayout3Buffer)
         buttonLayout3.addLayout(buttonLayout3Adaptive)
+        buttonLayout3.addLayout(buttonLayout3CheckBox)
         buttonLayout3.addLayout(buttonLayout3Objects)
         #buttonLayout3.addLayout(buttonLayout3Main)
         #buttonLayout3.addLayout(buttonLayout3Modify)
@@ -173,6 +181,7 @@ class cameraInput(QWidget):
         '''
 
         self.input = QVBoxLayout()
+        self.input.setAlignment(Qt.AlignCenter)
         self.input.addLayout(buttonLayout1)
         self.input.addLayout(buttonLayout2)
         self.input.addLayout(buttonLayout3)
@@ -180,6 +189,46 @@ class cameraInput(QWidget):
         self.setLayout(self.input)
         self.setWindowTitle("initialize Camera")
         self.show()
+
+    ### Values Change in arguments _ Handle Connections ###
+    def minAreaInputChange(self, text):
+        self.minAreaValue = text
+
+    def maxAreaInputChange(self, text):
+        self.maxAreaValue = text
+
+    def smallBufferInputChange(self, text):
+        self.smallBufferValue = text
+
+    def bigBufferInputChange(self, text):
+        self.bigBufferValue = text
+
+    def adaptiveInputChange(self, text):
+        self.adaptiveValue = text
+
+    def adaptiveModeChange(self):
+        if self.adaptiveModeInput.isChecked():
+            self.adaptiveModeValue = True
+        else:
+            self.adaptiveModeValue = False
+
+    def maxObjInputChange(self, text):
+        self.maxObjValue = text
+
+    def winWidthInputChange(self, text):
+        self.winWidthValue = text
+
+    def dispInputChange(self):
+        if self.dispInput.isChecked():
+            self.dispInputValue = True
+        else:
+            self.dispInputValue = False
+
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     def btnstate(self,b):
         if b.text() == "Video":
@@ -232,11 +281,19 @@ class cameraInput(QWidget):
         print fileName
         self.fileName = fileName
         #open main with vieo input
-        main.main(self.fileName)
+        videoDisp.main(self.fileName,
+                  self.minAreaValue, self.maxAreaValue,
+                  self.smallBufferValue, self.bigBufferValue,
+                  self.adaptiveValue, self.adaptiveModeValue,
+                  self.maxObjValue, self.winWidthValue, self.dispInputValue)
 
 
     def ipConnect(self):
-        ipCamera.ip(self.ipWebcam)
+        ipCamera.ip(self.ipWebcam,
+                    self.minAreaValue, self.maxAreaValue,
+                    self.smallBufferValue, self.bigBufferValue,
+                    self.adaptiveValue, self.adaptiveModeValue,
+                    self.maxObjValue, self.winWidthValue, self.dispInputValue)
 
     def link(self, text):
         #enable ipButton for connection with ip webacam
@@ -245,7 +302,12 @@ class cameraInput(QWidget):
 
     def cameraStream(self):
         #open pc webcam for streaming
-        streamDisp.main()
+        streamDisp.main(self.minAreaValue, self.maxAreaValue,
+                        self.smallBufferValue, self.bigBufferValue,
+                        self.adaptiveValue, self.adaptiveModeValue,
+                        self.maxObjValue, self.winWidthValue, self.dispInputValue)
+        #print self.minAreaValue, self.maxAreaValue, self.smallBufferValue, self.bigBufferValue
+        #print self.adaptiveModeValue
 
 
 

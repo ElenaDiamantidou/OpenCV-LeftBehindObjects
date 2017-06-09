@@ -17,34 +17,12 @@ def cpu_percent():
 	cpu_percentage = psutil.cpu_percent(interval=1)
 	print "CPU : {0}".format(cpu_percentage)
 
-def main(video):
-	print video
-	# construct the argument parser and parse the arguments
-	#ap = argparse.ArgumentParser()
-	#ap.add_argument("-v", "--video", help="path to the video file")
-	#ap.add_argument("-min", "--min-area", type=int, default=2000, help="minimum area size")
-	#ap.add_argument("-max", "--max-area", type=int, default=4800, help="maximum area size")
-	#ap.add_argument("-small", "--small-buffer", type=int, default=20, help="buffer for small objects")
-	#ap.add_argument("-big", "--big-buffer", type=int, default=100, help="buffer for big objects")
-	#ap.add_argument("-ad", "--adaptive", type=int, default=0, help="minutes after adaptive")
-	#ap.add_argument("-am", "--adaptive-mode", type=bool, default=0, help="adaptive mod ON/OFF")
-	#ap.add_argument("-max-obj", "--max-objects", type=int, default=2, help="maximum number of objects in frame to be adapted")
-	#ap.add_argument("-w", "--win-width", type=int, default=500, help="maximum window width")
-	#ap.add_argument("-disp", "--display", default="y", help="Display window")
-	#args = vars(ap.parse_args())
+def main(video,
+		minAreaValue,maxAreaValue,
+	  	smallBufferValue, bigBufferValue,
+		adaptiveValue, adaptiveModeValue,
+		maxObjValue, winWidthValue, dispInputValue):
 
-	# if the video argument is None, then we are reading from webcam
-	'''
-	if args.get("video", None) is None:
-		camera = cv2.VideoCapture(0)
-		# camera = cv2.VideoCapture("http://axilleas:79c87afa55@83.212.104.135:8080/4.MOV")
-		#camera = cv2.VideoCapture("http://::192.168.2.2:8080/")
-		time.sleep(0.25)
-
-	# we are reading from a video file
-	else:
-		pass
-	'''
 	camera = cv2.VideoCapture(video)
 
 	# initialize the first frame
