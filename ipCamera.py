@@ -123,7 +123,7 @@ def ip(ipString,
 
         		(x, y, w, h) = cv2.boundingRect(c)
         		#print len(cnts)
-        		if len(cnts_list) < 20:
+        		if len(cnts_list) < 15:
         			cnts_list.append(len(cnts))
         			#print cnts_list
         		else:

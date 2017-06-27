@@ -86,7 +86,7 @@ def main(video,
 			start = time.time()
 
 		# resize the frame, convert it to grayscale, and blur it
-		frame = imutils.resize(frame, 500) #args["win_width"])
+		frame = imutils.resize(frame, int(winWidthValue)) #args["win_width"])
 		gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 		gray = cv2.GaussianBlur(gray, (21, 21), 0)
 
@@ -112,13 +112,13 @@ def main(video,
 		# loop over the contours
 		for c in cnts:
 			# if the contour is too small, ignore it
-			if cv2.contourArea(c) < 2000: #args["min_area"]:
+			if cv2.contourArea(c) < int(minAreaValue): #args["min_area"]:
 				continue
-			elif cv2.contourArea(c) > 2000 and cv2.contourArea(c) < 4800:#args["min_area"] and cv2.contourArea(c) < args["max_area"]:
+			elif cv2.contourArea(c) > int(minAreaValue) and cv2.contourArea(c) < int(maxAreaValue):
 
 				(x, y, w, h) = cv2.boundingRect(c)
 				#print len(cnts)
-				if len(cnts_list) < 20:
+				if len(cnts_list) < 15:
 					cnts_list.append(len(cnts))
 					#print cnts_list
 				else:
