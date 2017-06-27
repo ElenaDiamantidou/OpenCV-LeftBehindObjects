@@ -43,9 +43,7 @@ def main(video,
 	#Variable for the counting of the frames
 	frames_counter = 0
 	adaptive_frames_counter = 0
-	#adaptive = args["adaptive"] * 60 * fps
-	adaptive = 0
-	adaptive_flag = False
+	adaptive = int(adaptiveValue) * 60 * fps
 	(grabbed, original_frame) = camera.read()
 	original_frame = imutils.resize(original_frame, 500) #args["win_width"]
 	original_gray = cv2.cvtColor(original_frame, cv2.COLOR_BGR2GRAY)
@@ -91,7 +89,7 @@ def main(video,
 		gray = cv2.GaussianBlur(gray, (21, 21), 0)
 
 		# if the first frame is None, initialize it
-		if firstFrame is None and adaptive_flag == False:
+		if firstFrame is None and adaptiveModeValue == False:
 			firstFrame = original_gray
 			continue
 		elif firstFrame is None:
@@ -131,7 +129,7 @@ def main(video,
 								cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2) #GREEN
 
 								adaptive_frames_counter += 1
-								adaptive_flag = True
+								adaptiveModeValue = True
 								#break
 
 				# if len(x_list) < args["small_buffer"] and len(y_list)<args["small_buffer"]:
@@ -160,11 +158,11 @@ def main(video,
 				(x, y, w, h) = cv2.boundingRect(c)
 
 				#if len(big_item_x_list) < args["big_buffer"] and len(big_item_y_list)<args["big_buffer"]:
-				if len(big_item_x_list) < 100 and len(big_item_y_list) < 100:
+				if len(big_item_x_list) < int(bigBufferValue) and len(big_item_y_list) < int(bigBufferValue):
 					big_item_x_list.append(x)
 					big_item_y_list.append(y)
 					cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2) #RED
-					adaptive_flag = False
+					adaptiveModeValue = False
 					adaptive_frames_counter = 0
 				else:
 					big_item_x_list.pop(0)
@@ -174,22 +172,22 @@ def main(video,
 
 					if (max(big_item_x_list) - min(big_item_x_list) > 3) and (max(big_item_y_list) - min(big_item_y_list) >3):
 						cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2) #RED
-						adaptive_flag = False
+						adaptiveModeValue = False
 						adaptive_frames_counter = 0
 					else:
 						cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2) #GREEN
-						adaptive_flag = True
+						adaptiveModeValue = True
 						adaptive_frames_counter += 1
 						#print adaptive_frames_counter
 
 		#args["win_width"] = 500
-		cv2.putText(frame, "FPS: {0}".format(fps), (500-130,30), font, 1, (255,0,0), 2, cv2.LINE_AA)
+		cv2.putText(frame, "FPS: {0}".format(fps), (int(winWidthValue)-130,30), font, 1, (255,0,0), 2, cv2.LINE_AA)
 		frames_counter = frames_counter + 1
 
 		# if args["adaptive"] == True:
 		# 	#adaptive_flag = False
 		# args["max_objects"] = 2
-		if adaptive_frames_counter >= 100 and len(cnts) <= 2 and adaptive_flag == True:
+		if adaptive_frames_counter >= 100 and len(cnts) <= 2 and adaptiveModeValue == True:
 			firstFrame = None
 			adaptive_frames_counter = 0
 			#print "X: "+str(x)+" Y: "+str(y)+" h: "+str(h)+" w: "+str(w)

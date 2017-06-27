@@ -51,7 +51,6 @@ def ip(ipString,
     	frames_counter = 0
     	adaptive_frames_counter = 0
     	adaptive = int(adaptiveValue) * 60 * fps
-    	adaptive_flag = False
     	(grabbed, original_frame) = camera.read()
     	original_frame = imutils.resize(original_frame, int(winWidthValue))
     	original_gray = cv2.cvtColor(original_frame, cv2.COLOR_BGR2GRAY)
@@ -96,7 +95,7 @@ def ip(ipString,
         gray = cv2.GaussianBlur(gray, (21, 21), 0)
 
         # if the first frame is None, initialize it
-        if firstFrame is None and adaptive_flag == False:
+        if firstFrame is None and adaptiveModeValue == False:
         	firstFrame = original_gray
         	continue
         elif firstFrame is None:
@@ -136,7 +135,7 @@ def ip(ipString,
         						cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2) #GREEN
 
         						adaptive_frames_counter += 1
-        						adaptive_flag = True
+        						adaptiveModeValue = True
         						#break
 
         		# if len(x_list) < args["small_buffer"] and len(y_list)<args["small_buffer"]:
@@ -169,7 +168,7 @@ def ip(ipString,
         			big_item_x_list.append(x)
         			big_item_y_list.append(y)
         			cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2) #RED
-        			adaptive_flag = False
+        			adaptiveModeValue = False
         			adaptive_frames_counter = 0
         		else:
         			big_item_x_list.pop(0)
@@ -179,11 +178,11 @@ def ip(ipString,
 
         			if (max(big_item_x_list) - min(big_item_x_list) > 3) and (max(big_item_y_list) - min(big_item_y_list) >3):
         				cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2) #RED
-        				adaptive_flag = False
+        				adaptiveModeValue = False
         				adaptive_frames_counter = 0
         			else:
         				cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2) #GREEN
-        				adaptive_flag = True
+        				adaptiveModeValue = True
         				adaptive_frames_counter += 1
         				#print adaptive_frames_counter
 
@@ -193,7 +192,7 @@ def ip(ipString,
         # if args["adaptive"] == True:
         # 	#adaptive_flag = False
         # args["max_objects"] = 2
-        if adaptive_frames_counter >= 100 and len(cnts) <= int(maxObjValue) and adaptive_flag == True:
+        if adaptive_frames_counter >= 100 and len(cnts) <= int(maxObjValue) and adaptiveModeValue == True:
         	firstFrame = None
         	adaptive_frames_counter = 0
         	#print "X: "+str(x)+" Y: "+str(y)+" h: "+str(h)+" w: "+str(w)
