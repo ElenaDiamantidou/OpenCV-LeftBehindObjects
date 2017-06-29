@@ -2,6 +2,7 @@
 
 Track left objects - Background Subtraction
 
+Firstly run *python cameraInput.py*
 
 OpenCV Tools
 
@@ -14,4 +15,3 @@ OpenCV 3.0,
 PyQt5,
 Python 2.7,
 IP Webcam android application
-
