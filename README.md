@@ -10,10 +10,10 @@ OpenCV Tools
 Graphical Interface with PyQt5
 
 **Dependencies** <br />
-imutils,
-OpenCV 3.0,
-PyQt5,
-Python 2.7,
+imutils <br />
+OpenCV 3.0 <br /
+PyQt5 <br />
+Python 2.7 <br />
 IP Webcam android application
 
 **Code** <br />
